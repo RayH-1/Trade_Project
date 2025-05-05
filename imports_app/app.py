@@ -37,6 +37,6 @@ st.subheader(f"Date: {selected_label}")
 # Show image
 img = load_image(selected_label)
 if img:
-    st.image(img, use_column_width=True)
+    st.image(img, use_container_width=True)
 else:
     st.warning("Image not found for selected date.")
