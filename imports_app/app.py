@@ -34,6 +34,8 @@ if "playing" not in st.session_state:
     st.session_state.playing = False
 if "frame_index" not in st.session_state:
     st.session_state.frame_index = 0
+if "autoplay_timer" not in st.session_state:
+    st.session_state.autoplay_timer = time.time()
 
 # Page config
 st.set_page_config(page_title="EU Trade Over Time", layout="centered")
@@ -46,6 +48,7 @@ col1, col2 = st.columns(2)
 with col1:
     if st.button("▶️ Play"):
         st.session_state.playing = True
+        st.session_state.autoplay_timer = time.time()  # Reset timer on play
 with col2:
     if st.button("⏹️ Stop"):
         st.session_state.playing = False
@@ -67,6 +70,8 @@ else:
 
 # Auto-play logic
 if st.session_state.playing:
-    time.sleep(0.4)
-    st.session_state.frame_index = (st.session_state.frame_index + 1) % len(month_labels)
-    st.experimental_rerun()
+    time_since_last_update = time.time() - st.session_state.autoplay_timer
+    if time_since_last_update > 0.4:  # Update every 0.4 seconds
+        st.session_state.frame_index = (st.session_state.frame_index + 1) % len(month_labels)
+        st.session_state.autoplay_timer = time.time()  # Reset the timer to avoid speeding up
+        # No manual rerun, Streamlit will automatically refresh when session_state changes
