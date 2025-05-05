@@ -17,7 +17,7 @@ def generate_month_labels(start='2000-01', end='2025-01'):
 
 # Load image
 def load_image(label):
-    path = f"imports_app/plots/{label}.png"
+    path = f"imports_app/plots/{label}.jpg"
     if os.path.exists(path):
         return Image.open(path)
     else:
