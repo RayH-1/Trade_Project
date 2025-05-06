@@ -1,29 +1,61 @@
-import sdmx
 import pandas as pd
 import requests
 import xml.etree.ElementTree as ET
 import os
+import io
 
 def fetch_imf_trade_data():
     """
     Fetch trade data from IMF's Direction of Trade Statistics (DOTS)
     Returns processed DataFrame with trade values
     """
-    client = sdmx.Client()
     url = (
         "http://dataservices.imf.org/REST/SDMX_XML.svc/CompactData/"
         "DOT/M..TMG_CIF_USD.US+CN+B0"
         "?startPeriod=2000&format=sdmx-2.1"
     )
     
-    # Retrieve SDMX data message
-    message = client.get(url=url)
+    # Directly fetch the XML data
+    response = requests.get(url)
     
-    # Convert to pandas Series with multi-index
-    df = sdmx.to_pandas(message.data[0])
+    if response.status_code != 200:
+        raise Exception(f"Failed to fetch data: {response.status_code}")
     
-    # Convert to DataFrame and reset index
-    df_flat = df.reset_index()
+    # Parse the XML response
+    root = ET.fromstring(response.content)
+    
+    # Define namespace mappings
+    namespaces = {
+        'message': 'http://www.SDMX.org/resources/SDMX/schemas/v2_1/message',
+        'generic': 'http://www.SDMX.org/resources/SDMX/schemas/v2_1/data/generic',
+        'common': 'http://www.SDMX.org/resources/SDMX/schemas/v2_1/common'
+    }
+    
+    # Extract series and observations
+    data = []
+    for series in root.findall('.//generic:Series', namespaces):
+        # Extract series attributes
+        series_keys = {}
+        for key in series.findall('./generic:SeriesKey/generic:Value', namespaces):
+            concept = key.get('id')
+            value = key.get('value')
+            series_keys[concept] = value
+        
+        # Extract observations
+        for obs in series.findall('./generic:Obs', namespaces):
+            time_period = obs.find('./generic:ObsDimension', namespaces).get('value')
+            value_element = obs.find('./generic:ObsValue', namespaces)
+            if value_element is not None:
+                value = float(value_element.get('value'))
+                
+                # Create a record for this observation
+                record = series_keys.copy()
+                record['TIME_PERIOD'] = time_period
+                record['value'] = value
+                data.append(record)
+    
+    # Convert to DataFrame
+    df_flat = pd.DataFrame(data)
     
     # Pivot to wide format
     df_wide = df_flat.pivot_table(
