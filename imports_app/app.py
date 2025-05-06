@@ -2,34 +2,50 @@ import streamlit as st
 from PIL import Image
 from datetime import datetime, timedelta
 import os
+import re
 
-# Generate date labels
 @st.cache_data
-def generate_month_labels(start='2000-01', end=None):
+def generate_month_labels(start='2000-01', end=None, plots_folder='plots/'):
     """
     Generate a list of month labels from start to end date in 'YYYY-MM' format.
-    If end is not provided, it defaults to the current system month and year.
+    If end is not provided, it defaults to the latest YYYY-MM found in the plots folder.
     
     Args:
         start (str): Starting month in 'YYYY-MM' format
-        end (str, optional): Ending month in 'YYYY-MM' format. Defaults to current month/year.
+        end (str, optional): Ending month in 'YYYY-MM' format or determined from folder content.
+        plots_folder (str): Path to the folder where month data is stored.
     
     Returns:
         list: List of month labels in 'YYYY-MM' format
     """
-    # If end is not provided, use current system date (month and year only)
+    # Get latest date from plots folder if end is not provided
     if end is None:
-        now = datetime.now()
-        end = now.strftime("%Y-%m")
-    
+        pattern = re.compile(r"\d{4}-\d{2}")
+        months = []
+
+        for name in os.listdir(plots_folder):
+            match = pattern.match(name)
+            if match:
+                try:
+                    months.append(datetime.strptime(match.group(), "%Y-%m"))
+                except ValueError:
+                    pass
+        
+        if months:
+            end_date_obj = max(months)
+            end = end_date_obj.strftime("%Y-%m")
+        else:
+            raise ValueError("No valid YYYY-MM date found in the plots folder.")
+
+    # Generate date labels
     dates = []
     start_date = datetime.strptime(start, "%Y-%m")
     end_date = datetime.strptime(end, "%Y-%m")
     
     while start_date <= end_date:
         dates.append(start_date.strftime("%Y-%m"))
-        start_date += timedelta(days=32)  # Add enough days to move to next month
-        start_date = start_date.replace(day=1)  # Reset to 1st of the month
+        start_date += timedelta(days=32)
+        start_date = start_date.replace(day=1)
     
     return dates
 
