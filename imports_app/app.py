@@ -34,9 +34,6 @@ index = st.slider("Scroll to see changes over time", 0, len(month_labels)-1, 0, 
 selected_label = month_labels[index]
 st.subheader(f"Month-Year: {selected_label}")
 
-
-month_labels = generate_month_labels()
-
 # Show image
 img = load_image(selected_label)
 if img:
