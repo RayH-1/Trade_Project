@@ -22,7 +22,7 @@ def generate_month_labels(start='2000-01', end=None, plots_folder='imports_app/p
         months = []
         
         for filename in os.listdir(plots_folder):
-            if filename.endswith('.png'):
+            if filename.endswith('.jpg'):
                 date_str = filename[:-4]  # remove '.png'
                 try:
                     date_obj = datetime.strptime(date_str, "%Y-%m")
