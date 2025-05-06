@@ -3,6 +3,9 @@ import requests
 import xml.etree.ElementTree as ET
 import os
 import io
+from io import BytesIO
+from PIL import Image
+import matplotlib.pyplot as plt
 
 def fetch_imf_trade_data():
     """
@@ -56,6 +59,28 @@ def fetch_imf_trade_data():
     
     # Convert to DataFrame
     df_flat = pd.DataFrame(data)
+    
+    # Pivot to wide format
+    df_wide = df_flat.pivot_table(
+        index=['REF_AREA', 'TIME_PERIOD'],  
+        columns='COUNTERPART_AREA',
+        values='value',
+        aggfunc='first'
+    )
+    
+    # Reset column names and index
+    df_wide.reset_index(inplace=True)
+    df_wide.columns.name = None
+    
+    # Rename columns for clarity
+    data = df_wide.rename(columns={
+        'FREQ': 'Data Granularity',
+        'REF_AREA': 'Importer_Code',
+        'INDICATOR': 'Indicator',
+        'COUNTERPART_AREA': 'Exporter_Code',
+    })
+    
+    return data
     
     # Pivot to wide format
     df_wide = df_flat.pivot_table(

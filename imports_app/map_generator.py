@@ -8,6 +8,8 @@ import cartopy.feature as cfeature
 import os
 import pandas as pd
 import geopandas as gpd
+import io
+from PIL import Image
 
 # Custom handler for touching legend patches
 class TouchingRectanglesHandler(HandlerBase):
@@ -48,6 +50,43 @@ def load_geo_data(geo_path):
     
     return gdf
 
+def process_trade_data(data):
+    """
+    Process trade data to find highest trading partner for each country
+    """
+    def get_highest_source(row):
+        # Handle potential NaN values
+        b0 = row.get('B0', 0) or 0
+        cn = row.get('CN', 0) or 0
+        us = row.get('US', 0) or 0
+        
+        total = b0 + cn + us
+        if total == 0:
+            return 'Unknown', 0
+            
+        max_value = max(b0, cn, us)
+        if max_value == b0:
+            return 'B0', max_value / total
+        elif max_value == cn:
+            return 'CN', max_value / total
+        else:
+            return 'US', max_value / total
+    
+    # Apply function to create new columns
+    data[['Highest_Source', 'Max_Share']] = data.apply(
+        lambda row: pd.Series(get_highest_source(row)), axis=1
+    )
+    
+    # Create binned categories based on Max_Share
+    data['bin'] = data['Max_Share'].apply(lambda value: 
+        1 if value <= 0.25 else
+        2 if value <= 0.5 else
+        3 if value <= 0.75 else
+        4
+    )
+    
+    return data
+
 def merge_data(gdf, trade_data, code_dict):
     """
     Merge trade data with geographical data and map codes to names
@@ -65,9 +104,10 @@ def merge_data(gdf, trade_data, code_dict):
     
     return merged
 
-def generate_map(merged_data, time_period, output_path):
+def generate_map_image(merged_data, time_period):
     """
     Generate a map visualization for a specific time period
+    Returns the image as a PIL Image object
     """
     # Filter data for specific time period
     gdata = merged_data[merged_data['TIME_PERIOD'] == time_period].copy()
@@ -144,22 +184,11 @@ def generate_map(merged_data, time_period, output_path):
     ax.set_title(f"Top Import Source by Country ({time_period})", fontsize=14, fontweight='bold', pad=20)
     ax.axis('off')
 
-    # Save figure
-    plt.savefig(output_path, dpi=150)
-    plt.close()
-
-def generate_all_maps(merged_data, output_dir='imports_app/plots'):
-    """
-    Generate maps for all time periods in the data
-    """
-    # Create output directory if it doesn't exist
-    os.makedirs(output_dir, exist_ok=True)
+    # Save figure to bytes buffer instead of file
+    buf = io.BytesIO()
+    plt.savefig(buf, format='jpg', dpi=150)
+    plt.close(fig)
     
-    # Generate maps for each time period if they don't already exist
-    for time_period in merged_data['TIME_PERIOD'].dropna().unique():
-        file_path = f'{output_dir}/{time_period}.jpg'
-        if not os.path.exists(file_path):
-            print(f"Generating map for {time_period}...")
-            generate_map(merged_data, time_period, file_path)
-        else:
-            print(f"Map for {time_period} already exists, skipping...")
+    # Convert buffer to PIL Image
+    buf.seek(0)
+    return Image.open(buf)
