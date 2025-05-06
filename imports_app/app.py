@@ -43,8 +43,8 @@ def load_image(label):
 
 # Streamlit UI
 st.set_page_config(page_title="EU Trade Over Time", layout="centered")
-st.subheader("Data is from the IMF Direction of Trade. (Visit the GitHub for any specific image for Month-Year)[https://github.com/RayH-1/Trade_Project/tree/main/imports_app/plots]")
 st.title("Change in Major Trading Partner Over Time")
+st.markdown("Data is from the IMF Direction of Trade. [Visit the GitHub for any specific image for Month-Year](https://github.com/RayH-1/Trade_Project/tree/main/imports_app/plots)")
 
 month_labels = generate_month_labels()
 
