@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import os
 
 @st.cache_data
-def generate_month_labels(start='2000-01', end=None, plots_folder='imports_app/plots'):
+def generate_month_labels(start='2000-01', end=None, plots_folder='imports_app/plots/'):
     """
     Generate a list of month labels from start to end date in 'YYYY-MM' format.
     If end is not provided, it defaults to the latest YYYY-MM found in the plots folder.
