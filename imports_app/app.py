@@ -57,7 +57,7 @@ col1, col2 = st.columns([4, 1])
 
 with col1:
     # Slider
-    index = st.slider("Scroll to see changes over time", 0, len(month_labels)-1, 0, key="time_slider")
+    index = st.slider("Scroll to see changes over time", 2000, 2025, 0, key="time_slider")
     selected_label = month_labels[index]
 
 with col2:
