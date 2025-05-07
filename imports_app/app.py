@@ -61,7 +61,7 @@ def load_image(label):
         width, height = img.size
 
         crop_side = int(width * 0.12)
-        crop_top = int(height * 0.8)
+        crop_top = int(height * 0.08)
         # Crop box: (left, upper, right, lower)
         cropped_img = img.crop((crop_side, crop_top, width - crop_side, height))
         
