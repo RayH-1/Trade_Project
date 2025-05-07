@@ -60,7 +60,7 @@ def load_image(label):
         
         # Crop some of the left and right sides to focus on the map
         width, height = img.size
-        crop_amount = int(width * 0.15)  # Crop 8% from each side
+        crop_amount = int(width * 0.12)  # Crop 8% from each side
         cropped_img = img.crop((crop_amount, 0, width - crop_amount, height))
         
         return cropped_img
@@ -119,6 +119,6 @@ with main_container:
         # Create columns to center the image better
         col1, col2, col3 = st.columns([0.5, 9, 0.5])
         with col2:
-            st.image(img, use_column_width=True)
+            st.image(img, use_container_width=True)
     else:
         st.warning("Image not found for selected date.")
