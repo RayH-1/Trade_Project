@@ -60,65 +60,100 @@ def load_image(label):
         
         # Crop some of the left and right sides to focus on the map
         width, height = img.size
-        crop_amount = int(width * 0.12)  # Crop 8% from each side
+        crop_amount = int(width * 0.12)  # Crop 12% from each side
         cropped_img = img.crop((crop_amount, 0, width - crop_amount, height))
         
         return cropped_img
     else:
         return None
 
-# Streamlit UI
-st.set_page_config(page_title="EU Trade Over Time", layout="wide")  # Set to wide layout
+# Streamlit UI - Set light theme and wide layout
+st.set_page_config(
+    page_title="EU Trade Over Time", 
+    layout="wide",
+    initial_sidebar_state="collapsed",
+    menu_items=None
+)
 
-# Use custom CSS to ensure consistent text sizes
+# Use custom CSS to ensure consistent text sizes, light theme, and compact layout
 st.markdown("""
     <style>
+    /* Light theme settings */
+    html, body, [class*="st-"] {
+        color: #262730;
+        background-color: #ffffff;
+    }
+    
+    /* Force compact layout with minimal margins */
+    .stApp {
+        margin: 0;
+        padding: 0;
+    }
+    
+    /* Reduce padding around elements */
+    .element-container, .stMarkdown, section {
+        padding-top: 0.2rem !important;
+        padding-bottom: 0.2rem !important;
+        margin-top: 0.2rem !important;
+        margin-bottom: 0.2rem !important;
+    }
+    
     .title {
-        font-size: 2rem !important;
+        font-size: 1.8rem !important;
         font-weight: bold;
-        margin-bottom: 0.5rem;
+        margin: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0.3rem !important;
         text-align: center;
     }
+    
     .subtitle {
-        font-size: 1.5rem !important;
-        margin-bottom: 1rem;
+        font-size: 1.4rem !important;
+        margin: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0.3rem !important;
         text-align: center;
     }
-    .stSlider, .stSlider > label {
-        font-size: 1.2rem !important;
+    
+    /* Make slider more compact */
+    .stSlider {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        margin-top: 0.3rem !important;
+        margin-bottom: 0.3rem !important;
+    }
+    
+    .stSlider > label {
+        font-size: 1.1rem !important;
+        margin-bottom: 0 !important;
+    }
+    
+    /* Hide fullscreen button on images to save space */
+    button[title="View fullscreen"] {
+        display: none;
+    }
+    
+    /* Remove default streamlit margins */
+    .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 0 !important;
+        max-width: 100% !important;
+    }
+    
+    /* Hide hamburger menu */
+    header {
+        visibility: hidden;
+    }
+    
+    /* Hide footer */
+    footer {
+        visibility: hidden;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# Apply custom CSS classes
+# Create a very compact layout
 st.markdown('<div class="title">Change in Major Trading Partner Over Time</div>', unsafe_allow_html=True)
 
-# Create container for better spacing
-main_container = st.container()
-
-with main_container:
-    month_labels = generate_month_labels()
-    
-    # Slider with improved styling
-    col1, col2, col3 = st.columns([1, 8, 1])
-    with col2:
-        index = st.slider(
-            "Scroll to see changes over time", 
-            0, 
-            len(month_labels)-1, 
-            0, 
-            format="%d"
-        )
-    
-    selected_label = month_labels[index]
-    st.markdown(f'<div class="subtitle">Month-Year: {selected_label}</div>', unsafe_allow_html=True)
-    
-    # Show image with minimal padding
-    img = load_image(selected_label)
-    if img:
-        # Create columns to center the image better
-        col1, col2, col3 = st.columns([1.5, 7, 1.5])
-        with col2:
-            st.image(img, use_container_width=True)
-    else:
-        st.warning("Image not found for selected date.")
+# Generate month labels
+month_labels = genera
