@@ -136,9 +136,6 @@ with main_container:
     index = st.session_state.slider_index
     selected_label = month_labels[index]
     
-    # Display date above the image
-    st.markdown(f'<div class="subtitle">Month-Year: {selected_label}</div>', unsafe_allow_html=True)
-    
     # Show image first
     img = load_image(selected_label)
     if img:
@@ -167,19 +164,19 @@ with main_container:
             on_change=update_slider
         )
     
-    # Create a very simple About section with color via direct HTML
+    # Add "About This App" section with blue background and white text
     st.markdown("""
-    <div style="background-color: #1E88E5; padding: 15px; border-radius: 5px; margin-top: 20px;">
-        <h3 style="color: white; margin-top: 0;">About This App</h3>
-        <p style="color: white;">
+    <div class="about-section">
+        <div class="about-title">About This App</div>
+        <div class="about-text">
             This application visualizes the change in major trading partners across the world. 
             The data it uses is from the International Monetary Fund Direction of Trade Statistics.
             Use the slider above to navigate through different months and years to see how trade relationships have evolved.
             The colors on the map represent the main import partner for each country during the selected period.
-        </p>
-        <p style="color: white;">
+            
+            
             The GitHub repo this app is connected to has a Jupyter Notebook you can use to automatically acquire new data via their API.
-            This application is a rudimentary image loader. A more dynamic webapp is in progress.
-        </p>
+            This application is a rudamentary image loader. A more dyanmic webapp is in progress.
+        </div>
     </div>
     """, unsafe_allow_html=True)
