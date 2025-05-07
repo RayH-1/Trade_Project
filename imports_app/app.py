@@ -72,6 +72,7 @@ st.set_page_config(
     page_title="EU Trade Over Time", 
     layout="wide",
     initial_sidebar_state="collapsed",
+    page_icon="🌍",
     menu_items=None
 )
 
@@ -156,4 +157,28 @@ st.markdown("""
 st.markdown('<div class="title">Change in Major Trading Partner Over Time</div>', unsafe_allow_html=True)
 
 # Generate month labels
-month_labels = genera
+month_labels = generate_month_labels()
+
+# Place slider in a smaller column to save vertical space
+col1, col2, col3 = st.columns([1.5, 7, 1.5])
+with col2:
+    index = st.slider(
+        "Scroll to see changes over time", 
+        0, 
+        len(month_labels)-1, 
+        0, 
+        format="%d",
+        key="time_slider"
+    )
+
+selected_label = month_labels[index]
+st.markdown(f'<div class="subtitle">Month-Year: {selected_label}</div>', unsafe_allow_html=True)
+
+# Show image with slight margin to ensure no scrolling
+img = load_image(selected_label)
+if img:
+    col1, col2, col3 = st.columns([1.5, 7, 1.5])
+    with col2:
+        st.image(img, use_column_width=True)
+else:
+    st.warning("Image not found for selected date.")
