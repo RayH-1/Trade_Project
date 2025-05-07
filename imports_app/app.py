@@ -61,7 +61,7 @@ def load_image(label):
         width, height = img.size
 
         crop_side = int(width * 0.12)
-        crop_top = int(height * 0.08)
+        crop_top = int(height * 0.06)
         # Crop box: (left, upper, right, lower)
         cropped_img = img.crop((crop_side, crop_top, width - crop_side, height))
         
@@ -82,7 +82,7 @@ st.markdown("""
     }
                     
     .title {
-        font-size: 1.1rem !important;
+        font-size: 1.2rem !important;
         font-weight: bold;
         margin-bottom: 0rem;
         text-align: center;
@@ -108,7 +108,7 @@ with main_container:
     month_labels = generate_month_labels()
     
     # Slider with improved styling
-    col1, col2, col3 = st.columns([1, 8, 1])
+    col1, col2, col3 = st.columns([0.5, 6, 0.5])
     with col2:
         index = st.slider(
             "Scroll to see changes over time", 
