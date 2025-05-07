@@ -58,10 +58,12 @@ def load_image(label):
     if os.path.exists(path):
         img = Image.open(path)
         
-        # Crop some of the left and right sides to focus on the map
         width, height = img.size
-        crop_amount = int(width * 0.12)  # Crop 8% from each side
-        cropped_img = img.crop((crop_amount, 0, width - crop_amount, height))
+
+        crop_side = int(width * 0.12)
+        crop_top = int(height * 0.10)
+        # Crop box: (left, upper, right, lower)
+        cropped_img = img.crop((crop_side, crop_top, width - crop_side, height))
         
         return cropped_img
     else:
@@ -80,7 +82,7 @@ st.markdown("""
     }
                     
     .title {
-        font-size: 1rem !important;
+        font-size: 1.1rem !important;
         font-weight: bold;
         margin-bottom: 0.2rem;
         text-align: center;
