@@ -120,9 +120,6 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Apply custom CSS classes
-st.markdown('<div class="title">Change in Major Trading Partner Over Time</div>', unsafe_allow_html=True)
-
 # Create container for better spacing
 main_container = st.container()
 
