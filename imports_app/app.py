@@ -61,7 +61,7 @@ def load_image(label):
         width, height = img.size
 
         crop_side = int(width * 0.12)
-        crop_top = int(height * 0.10)
+        crop_top = int(height * 0.8)
         # Crop box: (left, upper, right, lower)
         cropped_img = img.crop((crop_side, crop_top, width - crop_side, height))
         
@@ -84,16 +84,16 @@ st.markdown("""
     .title {
         font-size: 1.1rem !important;
         font-weight: bold;
-        margin-bottom: 0.2rem;
+        margin-bottom: 0rem;
         text-align: center;
     }
     .subtitle {
         font-size: 1rem !important;
-        margin-bottom: 1rem;
+        margin-bottom: 0rem;
         text-align: center;
     }
     .stSlider, .stSlider > label {
-        font-size: 1rem !important;
+        font-size: 0rem !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -119,8 +119,7 @@ with main_container:
         )
     
     selected_label = month_labels[index]
-    st.markdown(f'<div class="subtitle">Month-Year: {selected_label}</div>', unsafe_allow_html=True)
-    
+
     # Show image with minimal padding
     img = load_image(selected_label)
     if img:
