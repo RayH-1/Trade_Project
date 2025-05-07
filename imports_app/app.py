@@ -107,18 +107,7 @@ main_container = st.container()
 with main_container:
     month_labels = generate_month_labels()
     
-    # Show image first
-    selected_label = month_labels[0]
-    img = load_image(selected_label)
-    if img:
-        # Create columns to center the image better
-        col1, col2, col3 = st.columns([1.5, 5, 1.5])
-        with col2:
-            st.image(img, use_column_width=True)
-    else:
-        st.warning("Image not found for selected date.")
-
-    # Slider after the image
+    # Slider first (but we'll place it visually below the image using layout)
     col1, col2, col3 = st.columns([2, 20, 2])
     with col2:
         index = st.slider(
@@ -129,7 +118,7 @@ with main_container:
             format="%d"
         )
     
-    # Update image based on slider selection
+    # Dynamic image that responds to slider
     selected_label = month_labels[index]
     img = load_image(selected_label)
     if img:
@@ -137,3 +126,5 @@ with main_container:
         col1, col2, col3 = st.columns([1.5, 5, 1.5])
         with col2:
             st.image(img, use_column_width=True)
+    else:
+        st.warning("Image not found for selected date.")
