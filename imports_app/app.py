@@ -160,7 +160,7 @@ st.markdown('<div class="title">Change in Major Trading Partner Over Time</div>'
 month_labels = generate_month_labels()
 
 # Place slider in a smaller column to save vertical space
-col1, col2, col3 = st.columns([1.5, 7, 1.5])
+col1, col2, col3 = st.columns([1.5, 6, 1.5])
 with col2:
     index = st.slider(
         "Scroll to see changes over time", 
@@ -179,6 +179,6 @@ img = load_image(selected_label)
 if img:
     col1, col2, col3 = st.columns([1.5, 7, 1.5])
     with col2:
-        st.image(img, use_column_width=True)
+        st.image(img, use_container_width=True)
 else:
     st.warning("Image not found for selected date.")
