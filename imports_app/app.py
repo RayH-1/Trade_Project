@@ -108,7 +108,7 @@ with main_container:
     month_labels = generate_month_labels()
     
     # Slider with improved styling
-    col1, col2, col3 = st.columns([1.5, 12, 1.5])
+    col1, col2, col3 = st.columns([2, 20, 2])
     with col2:
         index = st.slider(
             "Scroll to see changes over time", 
