@@ -93,8 +93,13 @@ st.markdown("""
         text-align: center;
     }
     .stSlider, .stSlider > label {
-        font-size: 0rem !important;
+        font-size: 0.8rem !important;
     }
+    /* Hide footer and menu */
+    footer {visibility: hidden;}
+    #MainMenu {visibility: hidden;}
+    /* Reduce padding to fit more in viewport */
+    .block-container {padding-top: 1rem; padding-bottom: 0.5rem;}
     </style>
     """, unsafe_allow_html=True)
 
@@ -107,24 +112,40 @@ main_container = st.container()
 with main_container:
     month_labels = generate_month_labels()
     
-    # Slider first (but we'll place it visually below the image using layout)
-    col1, col2, col3 = st.columns([2, 20, 2])
-    with col2:
-        index = st.slider(
-            "Scroll to see changes over time", 
-            0, 
-            len(month_labels)-1, 
-            0, 
-            format="%d"
-        )
+    # First get the index from session state (or default to 0)
+    if 'slider_index' not in st.session_state:
+        st.session_state.slider_index = 0
     
-    # Dynamic image that responds to slider
+    index = st.session_state.slider_index
     selected_label = month_labels[index]
+    
+    # Display date above the image
+    st.markdown(f'<div class="subtitle">Month-Year: {selected_label}</div>', unsafe_allow_html=True)
+    
+    # Show image first
     img = load_image(selected_label)
     if img:
         # Create columns to center the image better
         col1, col2, col3 = st.columns([1.5, 5, 1.5])
         with col2:
-            st.image(img, use_column_width=True)
+            st.image(img, use_container_width=True)
     else:
         st.warning("Image not found for selected date.")
+    
+    # Then show the slider below the image
+    col1, col2, col3 = st.columns([2, 20, 2])
+    with col2:
+        # Using a callback to update the session state
+        def update_slider():
+            st.session_state.slider_index = st.session_state.slider_widget
+        
+        # Display slider after the image
+        st.slider(
+            "Scroll to see changes over time", 
+            0, 
+            len(month_labels)-1, 
+            st.session_state.slider_index,
+            format="%d",
+            key="slider_widget",
+            on_change=update_slider
+        )
