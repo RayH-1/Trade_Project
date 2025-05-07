@@ -103,7 +103,7 @@ st.markdown("""
     
     /* About section styling */
     .about-section {
-        background-color: #1E88E5;
+        background-color: #BA0020;
         color: white;
         padding: 1rem;
         border-radius: 5px;
@@ -115,7 +115,7 @@ st.markdown("""
         margin-bottom: 0.5rem;
     }
     .about-text {
-        font-size: 0.9rem;
+        font-size: 1rem;
     }
     </style>
     """, unsafe_allow_html=True)
