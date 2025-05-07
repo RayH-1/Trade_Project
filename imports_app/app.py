@@ -72,7 +72,7 @@ st.set_page_config(
     page_title="EU Trade Over Time", 
     layout="wide",
     initial_sidebar_state="collapsed",
-    page_icon="🌍",
+    page_icon="🇪🇺",
     menu_items=None
 )
 
@@ -85,18 +85,18 @@ st.markdown("""
         background-color: #ffffff;
     }
     
-    /* Force compact layout with minimal margins */
+    /* Force ultra-compact layout with no margins */
     .stApp {
         margin: 0;
         padding: 0;
     }
     
-    /* Reduce padding around elements */
+    /* Remove padding around elements completely */
     .element-container, .stMarkdown, section {
-        padding-top: 0.2rem !important;
-        padding-bottom: 0.2rem !important;
-        margin-top: 0.2rem !important;
-        margin-bottom: 0.2rem !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
     }
     
     .title {
@@ -116,17 +116,16 @@ st.markdown("""
         text-align: center;
     }
     
-    /* Make slider more compact */
+    /* Make slider ultra-compact */
     .stSlider {
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
-        margin-top: 0.3rem !important;
-        margin-bottom: 0.3rem !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
     
     .stSlider > label {
         font-size: 1.1rem !important;
-        margin-bottom: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
     
     /* Hide fullscreen button on images to save space */
@@ -134,10 +133,12 @@ st.markdown("""
         display: none;
     }
     
-    /* Remove default streamlit margins */
+    /* Remove default streamlit margins completely */
     .block-container {
-        padding-top: 1rem !important;
+        padding-top: 0 !important;
         padding-bottom: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
         max-width: 100% !important;
     }
     
@@ -159,17 +160,15 @@ st.markdown('<div class="title">Change in Major Trading Partner Over Time</div>'
 # Generate month labels
 month_labels = generate_month_labels()
 
-# Place slider in a smaller column to save vertical space
-col1, col2, col3 = st.columns([1.5, 6, 1.5])
-with col2:
-    index = st.slider(
-        "Scroll to see changes over time", 
-        0, 
-        len(month_labels)-1, 
-        0, 
-        format="%d",
-        key="time_slider"
-    )
+# Slider with no column layout to save space
+index = st.slider(
+    "Scroll to see changes over time", 
+    0, 
+    len(month_labels)-1, 
+    0, 
+    format="%d",
+    key="time_slider"
+)
 
 selected_label = month_labels[index]
 st.markdown(f'<div class="subtitle">Month-Year: {selected_label}</div>', unsafe_allow_html=True)
@@ -177,8 +176,7 @@ st.markdown(f'<div class="subtitle">Month-Year: {selected_label}</div>', unsafe_
 # Show image with slight margin to ensure no scrolling
 img = load_image(selected_label)
 if img:
-    col1, col2, col3 = st.columns([1.5, 7, 1.5])
-    with col2:
-        st.image(img, use_container_width=True)
+    # Display image using container width without column layout
+    st.image(img, use_container_width=True)
 else:
     st.warning("Image not found for selected date.")
