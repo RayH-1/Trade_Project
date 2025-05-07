@@ -1,14 +1,27 @@
 import streamlit as st
 from PIL import Image
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
+import numpy as np
 
 @st.cache_data
 def generate_month_labels(start='2000-01', end=None, plots_folder='imports_app/plots/'):
-    """Generate a list of month labels from start to end date in 'YYYY-MM' format."""
+    """
+    Generate a list of month labels from start to end date in 'YYYY-MM' format.
+    If end is not provided, it defaults to the latest YYYY-MM found in the plots folder.
+    
+    Args:
+        start (str): Starting month in 'YYYY-MM' format
+        end (str, optional): Ending month in 'YYYY-MM' format or determined from folder content.
+        plots_folder (str): Path to the folder where month data is stored.
+    
+    Returns:
+        list: List of month labels in 'YYYY-MM' format
+    """
     # Get latest date from plots folder if end is not provided
     if end is None:
         months = []
+        
         for filename in os.listdir(plots_folder):
             if filename.endswith('.jpg'):
                 date_str = filename[:-4]  # remove '.jpg'
@@ -39,41 +52,79 @@ def generate_month_labels(start='2000-01', end=None, plots_folder='imports_app/p
     
     return dates
 
-# Load image
+# Load and crop image to remove excess white space
 def load_image(label):
     path = f"imports_app/plots/{label}.jpg"
     if os.path.exists(path):
-        return Image.open(path)
+        img = Image.open(path)
+        
+        # Crop some of the left and right sides to focus on the map
+        width, height = img.size
+        crop_amount = int(width * 0.12)  # Crop 8% from each side
+        cropped_img = img.crop((crop_amount, 0, width - crop_amount, height))
+        
+        return cropped_img
     else:
         return None
 
-# Basic page setup
-st.set_page_config(page_title="EU Trade Over Time", layout="wide")
+# Streamlit UI
+st.set_page_config(page_title="EU Trade Over Time", layout="wide")  # Set to wide layout
 
-# Very minimal CSS - only essential adjustments
+# Use custom CSS to ensure consistent text sizes
 st.markdown("""
     <style>
-    .block-container {padding-top: 1rem !important; padding-bottom: 0 !important;}
-    footer {visibility: hidden;}
-    #MainMenu {visibility: hidden;}
+        /* Light theme settings */
+    html, body, [class*="st-"] {
+        color: #262730;
+        background-color: #ffffff;
+    }
+                    
+    .title {
+        font-size: 2rem !important;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+    .subtitle {
+        font-size: 1.5rem !important;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+    .stSlider, .stSlider > label {
+        font-size: 1.2rem !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
-# Simple title
-st.markdown("### Change in Major Trading Partner Over Time")
+# Apply custom CSS classes
+st.markdown('<div class="title">Change in Major Trading Partner Over Time</div>', unsafe_allow_html=True)
 
-# Get month labels
-month_labels = generate_month_labels()
+# Create container for better spacing
+main_container = st.container()
 
-# Slider in a single column for maximum width
-index = st.slider("", 0, len(month_labels)-1, 0)
-selected_label = month_labels[index]
-st.markdown(f"**{selected_label}**")
-
-# Load and display image - simple approach
-img = load_image(selected_label)
-if img:
-    # Simple image display with automatic width calculation
-    st.image(img, width=int(st.session_state.get("_screen_width", 1000) * 0.8))
-else:
-    st.warning("Image not found for selected date.")
+with main_container:
+    month_labels = generate_month_labels()
+    
+    # Slider with improved styling
+    col1, col2, col3 = st.columns([1, 8, 1])
+    with col2:
+        index = st.slider(
+            "Scroll to see changes over time", 
+            0, 
+            len(month_labels)-1, 
+            0, 
+            format="%d"
+        )
+    
+    selected_label = month_labels[index]
+    st.markdown(f'<div class="subtitle">Month-Year: {selected_label}</div>', unsafe_allow_html=True)
+    
+    # Show image with minimal padding
+    img = load_image(selected_label)
+    if img:
+        # Create columns to center the image better
+        col1, col2, col3 = st.columns([1.5, 5, 1.5])
+        with col2:
+            st.image(img, use_container_width=True)
+    else:
+        st.warning("Image not found for selected date.")
