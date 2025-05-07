@@ -60,7 +60,7 @@ def load_image(label):
         
         # Crop some of the left and right sides to focus on the map
         width, height = img.size
-        crop_amount = int(width * 0.08)  # Crop 8% from each side
+        crop_amount = int(width * 0.20)  # Crop 8% from each side
         cropped_img = img.crop((crop_amount, 0, width - crop_amount, height))
         
         return cropped_img
