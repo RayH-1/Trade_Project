@@ -117,7 +117,7 @@ with main_container:
     img = load_image(selected_label)
     if img:
         # Create columns to center the image better
-        col1, col2, col3 = st.columns([0.5, 9, 0.5])
+        col1, col2, col3 = st.columns([1.5, 7, 1.5])
         with col2:
             st.image(img, use_container_width=True)
     else:
