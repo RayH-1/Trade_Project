@@ -1,8 +1,7 @@
 import streamlit as st
 from PIL import Image
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
-import numpy as np
 
 @st.cache_data
 def generate_month_labels(start='2000-01', end=None, plots_folder='imports_app/plots/'):
@@ -58,73 +57,109 @@ def load_image(label):
     if os.path.exists(path):
         img = Image.open(path)
         
-        # Crop some of the left and right sides to focus on the map
+        # Crop more aggressively to fit in viewport
         width, height = img.size
-        crop_amount = int(width * 0.12)  # Crop 8% from each side
-        cropped_img = img.crop((crop_amount, 0, width - crop_amount, height))
+        crop_left = int(width * 0.15)  # Crop 15% from each side
+        crop_right = int(width * 0.15)
+        crop_top = int(height * 0.05)   # Crop 5% from top and bottom
+        crop_bottom = int(height * 0.05)
+        
+        cropped_img = img.crop((crop_left, crop_top, width - crop_right, height - crop_bottom))
         
         return cropped_img
     else:
         return None
 
 # Streamlit UI
-st.set_page_config(page_title="EU Trade Over Time", layout="wide")  # Set to wide layout
+st.set_page_config(
+    page_title="EU Trade Over Time", 
+    layout="wide",
+    initial_sidebar_state="collapsed"  # Collapse sidebar by default to maximize space
+)
 
-# Use custom CSS to ensure consistent text sizes
+# Use custom CSS to ensure viewport fit
 st.markdown("""
     <style>
-        /* Light theme settings */
-    html, body, [class*="st-"] {
-        color: #262730;
-        background-color: #ffffff;
-    }
-                    
-    .title {
-        font-size: 2rem !important;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-        text-align: center;
-    }
-    .subtitle {
-        font-size: 1.5rem !important;
-        margin-bottom: 1rem;
-        text-align: center;
-    }
-    .stSlider, .stSlider > label {
-        font-size: 1.2rem !important;
-    }
+        /* Fix viewport height */
+        html, body, [class*="css"] {
+            height: 100vh !important;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        /* Remove unnecessary padding */
+        .block-container {
+            padding-top: 1rem !important;
+            padding-bottom: 0rem !important;
+            max-width: 100% !important;
+        }
+        
+        /* Reduce spacing */
+        .stSlider [data-testid="stVerticalBlock"] {
+            gap: 0.5rem !important;
+        }
+        
+        /* Compact title */
+        .title {
+            font-size: 1.5rem !important;
+            font-weight: bold;
+            margin-bottom: 0rem;
+            text-align: center;
+            padding: 0;
+        }
+        
+        /* Smaller subtitle */
+        .subtitle {
+            font-size: 1rem !important;
+            margin-bottom: 0rem;
+            text-align: center;
+        }
+        
+        /* Compact slider */
+        .stSlider {
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+        }
+        
+        /* Hide Streamlit branding */
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        
+        /* Make image container fit viewport */
+        .stImage > img {
+            max-height: calc(100vh - 120px) !important;
+            width: auto !important;
+            object-fit: contain;
+        }
     </style>
     """, unsafe_allow_html=True)
 
-# Apply custom CSS classes
+# Create a more compact layout
 st.markdown('<div class="title">Change in Major Trading Partner Over Time</div>', unsafe_allow_html=True)
 
-# Create container for better spacing
-main_container = st.container()
+month_labels = generate_month_labels()
 
-with main_container:
-    month_labels = generate_month_labels()
-    
-    # Slider with improved styling
-    col1, col2, col3 = st.columns([1, 8, 1])
-    with col2:
-        index = st.slider(
-            "Scroll to see changes over time", 
-            0, 
-            len(month_labels)-1, 
-            0, 
-            format="%d"
-        )
-    
-    selected_label = month_labels[index]
-    st.markdown(f'<div class="subtitle">Month-Year: {selected_label}</div>', unsafe_allow_html=True)
-    
-    # Show image with minimal padding
-    img = load_image(selected_label)
-    if img:
-        # Create columns to center the image better
-        col1, col2, col3 = st.columns([1.5, 5, 1.5])
-        with col2:
-            st.image(img, use_container_width=True)
-    else:
-        st.warning("Image not found for selected date.")
+# Create a more compact slider
+col1, col2, col3 = st.columns([1, 10, 1])
+with col2:
+    index = st.slider(
+        "", # Remove label for space savings
+        0, 
+        len(month_labels)-1, 
+        0,
+        format="%d"
+    )
+
+selected_label = month_labels[index]
+st.markdown(f'<div class="subtitle">Month-Year: {selected_label}</div>', unsafe_allow_html=True)
+
+# Display image optimized for viewport
+img = load_image(selected_label)
+if img:
+    # Use a container to maintain aspect ratio while filling available space
+    image_container = st.container()
+    with image_container:
+        st.image(img, use_column_width=True)
+else:
+    st.warning("Image not found for selected date.")
