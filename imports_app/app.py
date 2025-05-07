@@ -5,22 +5,10 @@ import os
 
 @st.cache_data
 def generate_month_labels(start='2000-01', end=None, plots_folder='imports_app/plots/'):
-    """
-    Generate a list of month labels from start to end date in 'YYYY-MM' format.
-    If end is not provided, it defaults to the latest YYYY-MM found in the plots folder.
-    
-    Args:
-        start (str): Starting month in 'YYYY-MM' format
-        end (str, optional): Ending month in 'YYYY-MM' format or determined from folder content.
-        plots_folder (str): Path to the folder where month data is stored.
-    
-    Returns:
-        list: List of month labels in 'YYYY-MM' format
-    """
+    """Generate a list of month labels from start to end date in 'YYYY-MM' format."""
     # Get latest date from plots folder if end is not provided
     if end is None:
         months = []
-        
         for filename in os.listdir(plots_folder):
             if filename.endswith('.jpg'):
                 date_str = filename[:-4]  # remove '.jpg'
@@ -51,115 +39,41 @@ def generate_month_labels(start='2000-01', end=None, plots_folder='imports_app/p
     
     return dates
 
-# Load and crop image to remove excess white space
+# Load image
 def load_image(label):
     path = f"imports_app/plots/{label}.jpg"
     if os.path.exists(path):
-        img = Image.open(path)
-        
-        # Crop more aggressively to fit in viewport
-        width, height = img.size
-        crop_left = int(width * 0.15)  # Crop 15% from each side
-        crop_right = int(width * 0.15)
-        crop_top = int(height * 0.05)   # Crop 5% from top and bottom
-        crop_bottom = int(height * 0.05)
-        
-        cropped_img = img.crop((crop_left, crop_top, width - crop_right, height - crop_bottom))
-        
-        return cropped_img
+        return Image.open(path)
     else:
         return None
 
-# Streamlit UI
-st.set_page_config(
-    page_title="EU Trade Over Time", 
-    layout="wide",
-    initial_sidebar_state="collapsed"  # Collapse sidebar by default to maximize space
-)
+# Basic page setup
+st.set_page_config(page_title="EU Trade Over Time", layout="wide")
 
-# Use custom CSS to ensure viewport fit
+# Very minimal CSS - only essential adjustments
 st.markdown("""
     <style>
-        /* Fix viewport height */
-        html, body, [class*="css"] {
-            height: 100vh !important;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-        
-        /* Remove unnecessary padding */
-        .block-container {
-            padding-top: 1rem !important;
-            padding-bottom: 0rem !important;
-            max-width: 100% !important;
-        }
-        
-        /* Reduce spacing */
-        .stSlider [data-testid="stVerticalBlock"] {
-            gap: 0.5rem !important;
-        }
-        
-        /* Compact title */
-        .title {
-            font-size: 1.5rem !important;
-            font-weight: bold;
-            margin-bottom: 0rem;
-            text-align: center;
-            padding: 0;
-        }
-        
-        /* Smaller subtitle */
-        .subtitle {
-            font-size: 1rem !important;
-            margin-bottom: 0rem;
-            text-align: center;
-        }
-        
-        /* Compact slider */
-        .stSlider {
-            padding-top: 0 !important;
-            padding-bottom: 0 !important;
-        }
-        
-        /* Hide Streamlit branding */
-        #MainMenu {visibility: hidden;}
-        footer {visibility: hidden;}
-        
-        /* Make image container fit viewport */
-        .stImage > img {
-            max-height: calc(100vh - 120px) !important;
-            width: auto !important;
-            object-fit: contain;
-        }
+    .block-container {padding-top: 1rem !important; padding-bottom: 0 !important;}
+    footer {visibility: hidden;}
+    #MainMenu {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
-# Create a more compact layout
-st.markdown('<div class="title">Change in Major Trading Partner Over Time</div>', unsafe_allow_html=True)
+# Simple title
+st.markdown("### Change in Major Trading Partner Over Time")
 
+# Get month labels
 month_labels = generate_month_labels()
 
-# Create a more compact slider
-col1, col2, col3 = st.columns([1, 10, 1])
-with col2:
-    index = st.slider(
-        "", # Remove label for space savings
-        0, 
-        len(month_labels)-1, 
-        0,
-        format="%d"
-    )
-
+# Slider in a single column for maximum width
+index = st.slider("", 0, len(month_labels)-1, 0)
 selected_label = month_labels[index]
-st.markdown(f'<div class="subtitle">Month-Year: {selected_label}</div>', unsafe_allow_html=True)
+st.markdown(f"**{selected_label}**")
 
-# Display image optimized for viewport
+# Load and display image - simple approach
 img = load_image(selected_label)
 if img:
-    # Use a container to maintain aspect ratio while filling available space
-    image_container = st.container()
-    with image_container:
-        st.image(img, use_column_width=True)
+    # Simple image display with automatic width calculation
+    st.image(img, width=int(st.session_state.get("_screen_width", 1000) * 0.8))
 else:
     st.warning("Image not found for selected date.")
