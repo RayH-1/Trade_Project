@@ -173,8 +173,6 @@ with main_container:
             The data it uses is from the International Monetary Fund Direction of Trade Statistics.
             Use the slider above to navigate through different months and years to see how trade relationships have evolved.
             The colors on the map represent the main import partner for each country during the selected period.
-            
-            
             The GitHub repo this app is connected to has a Jupyter Notebook you can use to automatically acquire new data via their API.
             This application is a rudamentary image loader. A more dyanmic webapp is in progress.
         </div>
