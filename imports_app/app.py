@@ -70,7 +70,7 @@ def load_image(label):
         return None
 
 # Streamlit UI
-st.set_page_config(page_title="EU Trade Over Time", layout="wide")  # Set to wide layout
+st.set_page_config(page_title="European Union Trade Over Time", layout="wide")  # Set to wide layout
 
 # Use custom CSS to ensure consistent text sizes
 st.markdown("""
