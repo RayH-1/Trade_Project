@@ -80,18 +80,18 @@ st.markdown("""
     }
                     
     .title {
-        font-size: 2rem !important;
+        font-size: 1rem !important;
         font-weight: bold;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.2rem;
         text-align: center;
     }
     .subtitle {
-        font-size: 1.5rem !important;
+        font-size: 1rem !important;
         margin-bottom: 1rem;
         text-align: center;
     }
     .stSlider, .stSlider > label {
-        font-size: 1.2rem !important;
+        font-size: 1rem !important;
     }
     </style>
     """, unsafe_allow_html=True)
