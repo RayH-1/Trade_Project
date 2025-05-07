@@ -107,7 +107,7 @@ st.markdown("""
         color: white;
         padding: 1rem;
         border-radius: 5px;
-        margin-top: 1rem;
+        margin-top: 0.75rem;
     }
     .about-title {
         font-size: 1.2rem;
