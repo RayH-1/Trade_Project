@@ -72,7 +72,7 @@ def load_image(label):
 # Streamlit UI
 st.set_page_config(page_title="EU Trade Over Time", layout="wide")  # Set to wide layout
 
-# Use custom CSS to ensure consistent text sizes
+# Use custom CSS to ensure responsive text scaling
 st.markdown("""
     <style>
         /* Light theme settings */
@@ -82,18 +82,29 @@ st.markdown("""
     }
                     
     .title {
-        font-size: 1.2rem !important;
+        font-size: calc(1rem + 1vw) !important;
         font-weight: bold;
-        margin-bottom: 0rem;
+        margin-bottom: 0.1rem;
         text-align: center;
     }
     .subtitle {
-        font-size: 1rem !important;
-        margin-bottom: 0rem;
+        font-size: calc(0.8rem + 0.5vw) !important;
+        margin-bottom: 0.1rem;
         text-align: center;
     }
+    .slider-container {
+        position: fixed;
+        bottom: 20px;
+        left: 0;
+        right: 0;
+        padding: 0 10%;
+        z-index: 100;
+    }
     .stSlider, .stSlider > label {
-        font-size: 0rem !important;
+        font-size: calc(0.8rem + 0.5vw) !important;
+    }
+    .image-container {
+        margin-bottom: 60px; /* Add space for the fixed slider */
     }
     </style>
     """, unsafe_allow_html=True)
@@ -107,25 +118,33 @@ main_container = st.container()
 with main_container:
     month_labels = generate_month_labels()
     
-    # Slider with improved styling
-    col1, col2, col3 = st.columns([2, 20, 2])
-    with col2:
-        index = st.slider(
-            "Scroll to see changes over time", 
-            0, 
-            len(month_labels)-1, 
-            0, 
-            format="%d"
-        )
-    
-    selected_label = month_labels[index]
-
     # Show image with minimal padding
+    img = load_image(month_labels[0])
+    if img:
+        # Create columns to center the image better
+        col1, col2, col3 = st.columns([1.5, 5, 1.5])
+        with col2:
+            st.image(img, use_container_width=True, output_format="JPEG")
+    else:
+        st.warning("Image not found for selected date.")
+
+    # Slider at the bottom with fixed positioning
+    st.markdown('<div class="slider-container">', unsafe_allow_html=True)
+    index = st.slider(
+        "Scroll to see changes over time", 
+        0, 
+        len(month_labels)-1, 
+        0, 
+        key="bottom_slider",
+        format="%d"
+    )
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Update image based on slider value
+    selected_label = month_labels[index]
     img = load_image(selected_label)
     if img:
         # Create columns to center the image better
         col1, col2, col3 = st.columns([1.5, 5, 1.5])
         with col2:
-            st.image(img, use_container_width=True)
-    else:
-        st.warning("Image not found for selected date.")
+            st.image(img, use_container_width=True, output_format="JPEG")
