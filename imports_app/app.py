@@ -103,8 +103,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Apply custom CSS classes
-st.markdown('<div class="title">Change in Major Trading Partner Over Time</div>', unsafe_allow_html=True)
+
 
 # Create container for better spacing
 main_container = st.container()
@@ -119,8 +118,8 @@ with main_container:
     index = st.session_state.slider_index
     selected_label = month_labels[index]
     
-    # Display date above the image
-    st.markdown(f'<div class="subtitle">Month-Year: {selected_label}</div>', unsafe_allow_html=True)
+    # Apply custom CSS classes
+    st.markdown('<div class="title">Change in Major Trading Partner Over Time</div>', unsafe_allow_html=True)
     
     # Show image first
     img = load_image(selected_label)
