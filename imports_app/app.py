@@ -173,9 +173,9 @@ with main_container:
             The data it uses is from the International Monetary Fund Direction of Trade Statistics.
             Use the slider above to navigate through different months and years to see how trade relationships have evolved.
             The colors represent the percent of Cost, Insurance, and Freight (CIF) in USD from either the EU, US, or China (Whichever has a highest value for a given country).</p>
-            <p> The [GitHub repository](https://github.com/rayh-1/trade_project) this app is connected to has a Jupyter Notebook you can use to automatically acquire new data via their API.
+            <p> The <a href="https://github.com/rayh-1/trade_project">GitHub repository</a> this app is connected to has a Jupyter Notebook you can use to automatically acquire new data via their API.
             This application is a rudamentary image loader. A more dyanmic webapp is in progress. </p>
-            <p> If you would like to reach out to the author, feel free to connect on [LinkedIn](https://www.linkedin.com/in/raysrh/)
+            <p> If you would like to reach out to the author, feel free to connect on <a href="https://www.linkedin.com/in/raysrh/">LinkedIn</a> </p>
         </div>
     </div>
     """, unsafe_allow_html=True)
